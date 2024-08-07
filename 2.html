@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>收藏家</title>
+    <style>
+      /* 繼承全局樣式 */
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #121525; /* 背景顏色設置為 #121525 */
+        color: #333;
+      }
+
+      /* 固定導航欄樣式 */
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: space-between;
+        background-color: #333;
+        color: white;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 導航欄連結樣式 */
+      .navbar a {
+        flex: 1;
+        display: block;
+        text-align: center;
+        line-height: 50px;
+        text-decoration: none;
+        color: white;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      /* 滑鼠移動到導航連結時的反白效果 */
+      .navbar a:hover {
+        background-color: #555;
+        color: #fff;
+      }
+
+      /* 導航欄下拉選單樣式 */
+      .navbar .dropdown {
+        flex: 1;
+        position: relative;
+      }
+
+      .navbar .dropdown a {
+        width: 100%;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #333;
+        min-width: 100px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .dropdown-content a {
+        color: white;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      /* 滑鼠移動到下拉選單項目時的反白效果 */
+      .dropdown-content a:hover {
+        background-color: #555;
+        color: #fff;
+      }
+
+      /* 滑鼠移動到成員項目時顯示下拉選單 */
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      /* 內容區域樣式 */
+      .content {
+        margin-top: 50px;
+        padding: 20px;
+      }
+
+      /* 橫幅區域樣式 */
+      .banner {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      /* 背景圖片樣式，包含亮度調整 */
+      .banner .background {
+        width: 100%;
+        height: 100%;
+        filter: brightness(30%); /* 調整亮度至 70% */
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        margin: 0; /* 清除 margin */
+        padding: 0; /* 清除 padding */
+      }
+
+      /* 背景圖片調整尺寸並保持比例 */
+      .banner .background img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        margin: 0; /* 清除 margin */
+        padding: 0; /* 清除 padding */
+      }
+
+      /* 重疊圖標樣式 */
+      .banner .overlay-image {
+        position: absolute;
+        top: 50%;
+        left: 100px; /* 圖標左邊間隔 100px */
+        transform: translateY(-50%);
+        width: auto;
+        height: 60%; /* 高度為橫幅高度的 60% */
+      }
+
+      /* 重疊圖標圖片樣式 */
+      .banner .overlay-image img {
+        height: 100%;
+        width: auto;
+      }
+
+      /* 重疊文字樣式 */
+      .banner .overlay-text1 {
+        position: absolute;
+        top: 50%;
+        left: 300px; /* 改為 300px 的間隔 */
+        transform: translateY(-50%);
+        color: white;
+        font-size: 10em; /* 字體大小改為 10em */
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .banner .overlay-text2 {
+        position: absolute;
+        top: 50%;
+        right: 5%; /* 改為 300px 的間隔 */
+        transform: translateY(-50%);
+        color: white;
+        font-size: 2em; /* 字體大小改為 10em */
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        background-color: rgba(0.24,0.16,0.08,0.5);
+        padding: 12px;
+        border-radius: 12px;
+      }
+
+      /* H1 大標題樣式 */
+      h1 {
+        color: white;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+        text-align: center; /* 置中對齊 */
+      }
+
+      /* H3 中標題樣式 */
+      h3 {
+        color: lightblue;
+        text-decoration: underline;
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        text-align: center; /* 置中對齊 */
+      }
+
+      /* 一般文字樣式 */
+      p {
+        font-size: 1.2em;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: white;
+        text-align: center; /* 置中對齊 */
+      }
+
+      /* 分隔線樣式 */
+      .separator {
+        border: 0;
+        border-top: 1px solid gray;
+        margin: 10px 0;
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      
+
+      /* 內容區塊樣式 */
+      .half {
+        display: inline-block;
+        width: 48%;
+        vertical-align: top;
+        padding: 10px;
+      }
+
+      /* 左側區塊樣式 */
+      .green-text {
+        color: green;
+        text-align: center; /* 置中對齊 */
+      }
+      .green-text img{
+        display: inline-block;
+        height: 20px;
+        width: auto;
+      }
+
+      /* 右側區塊樣式 */
+      .red-text {
+        color: red;
+        text-align: center; /* 置中對齊 */
+      }
+      .red-text img{
+        display: inline-block;
+        height: 20px;
+        width: auto;
+      }
+
+      /* GIF 圖片樣式 */
+      .gif-container {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .gif-container img {
+        width: 60%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 固定導航欄 -->
+    <div class="navbar">
+      <a href="introduce.html">基礎遊戲規則</a>
+      <div class="dropdown">
+        <a href="members.html">擴充角色介紹</a>
+        <div class="dropdown-content">
+          <a href="1.html">先鋒</a>
+          <a href="2.html">收藏家</a>
+          <a href="3.html">地下商人</a>
+          <a href="4.html">修女</a>
+          <a href="5.html">繼位者</a>
+          <a href="6.html">數學家</a>
+          <a href="7.html">藝術家</a>
+          <a href="8.html">雕琢師</a>
+          <a href="9.html">牧師</a>
+          <a href="10.html">律法家</a>
+          <a href="11.html">革命者</a>
+          <a href="12.html">祭司</a>
+        </div>
+      </div>
+      <a href="#about">關於我們</a>
+    </div>
+
+    <!-- 主要內容區域 -->
+    <div class="content">
+      <!-- 橫幅區域 -->
+      <div class="banner">
+        <!-- 背景圖片 -->
+        <div class="background">
+          <img src="background.jpg" alt="Banner" />
+        </div>
+        <!-- 重疊圖標 -->
+        <div class="overlay-image">
+          <img src="taurus.png" alt="Overlay" />
+        </div>
+        <!-- 重疊文字 -->
+        <div class="overlay-text1">收藏家</div>
+        <div class="overlay-text2">
+          初期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.0<br>
+          中期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.0<br>
+          末期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0<br>
+          整體&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.0</div>
+      </div>>
+
+      <!-- 成員網頁內容設計 -->
+      <!-- 技能區域 -->
+      <h1>技能</h1>
+      <p>遊戲開始時，隨機獲取兩張I階<a style="color: lightblue;">固定寶石</a>。自己的回合開始時，
+        若選擇拿取<a style="color: lightblue;">流動寶石</a>，改為拿取<a style="color: orange;">持有固定寶石種類</a>顆不同顏色的
+        <a style="color: lightblue;">流動寶石</a>各一顆或是<a style="color: orange;">持有數最高的固定寶石</a>顆相同顏色的
+        <a style="color: lightblue;">流動寶石</a>，不受到庫存4顆以下不可重複拿取的規則限制。</p>
+      <div class="gif-container">
+        <img src="example.gif" alt="Example GIF" />
+      </div>
+      <hr class="separator" />
+
+      <!-- 優點和缺點區域 -->
+      <h1>優點和缺點</h1>
+      <div class="half green-text">
+        <h3>優點</h3>
+        <p>
+          <img src="check.png">初期擁有2張發展卡，建構領先的基礎<br>
+          <img src="check.png">中期可透過技能拿取大量寶石，快速換取III階發展卡衝高分數<br>
+        </p>
+      </div>
+      <div class="half red-text">
+        <h3>缺點</h3>
+        <p>
+          <img src="close.png">換到第3張固定寶石前，可以拿取的流動寶石彈性低<br>
+          <img src="close.png">遊戲末期拿取流動寶石的時機減少，技能效益降低
+        </p>
+      </div>
+      <hr class="separator" />
+
+      <!-- 致勝策略區域 -->
+      <h1>致勝策略</h1>
+      <p>利用技能在遊戲初期建構良好基礎、並在中期盡可能換取III階發展卡。需要再其它玩家有能力換取III階發展卡前收掉遊戲。</p>
+    </div>
+  </body>
+</html>
